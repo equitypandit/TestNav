@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">Equitypandit</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="openDrawer">open_drawer</string>
+    <string name="closeDrawer">close_drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- Navigation Drawer menu labels -->
+    <string name="nav_home">Home</string>
+    <string name="nav_pricing">Pricing</string>
+    <string name="nav_latest_news">Latest News</string>
+    <string name="nav_market_prediction">Market Prediction</string>
+    <string name="nav_media_section">Media Section</string>
+    <string name="nav_about_us">About Us</string>
+
+    <!-- Toolbar titles when navigation menu item is selected -->
+    <string-array name="nav_item_activity_titles">
+        <item>Home</item>
+        <item>Pricing</item>
+        <item>Latest News</item>
+        <item>Market Prediction</item>
+        <item>Media Section</item>
+    </string-array>
+    <string name="activity_title_news_single">Latest News</string>
+    <string name="activity_title_about_us">About Us</string>
+    <string name="activity_title_privacy_policy">Privacy Policy</string>
+    <string name="action_clear_all">Clear All</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_mark_all_read">Mark All as Read</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_about_us">About Us</string>
+    <string name="title_activity_privacy_policy">Privacy Policy</string>
+    <string name="title_activity_circle_transform">CircleTransform</string>
+    <string name="title_activity_free_trial">Take A Free Trial</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_firebase_gen_ids">FirebaseGenIds</string>
+    <string name="title_activity_notification_handler">NotificationHandlerActivity</string>
+    <string name="title_activity_pricing">Pricing</string>
+    <string name="title_activity_pricing_single">PricingSingleActivity</string>
+    <string name="title_activity_paynow">PaynowActivity</string>
+    <string name="title_activity_ask_analyst">AskAnalystActivity</string>
+    <string name="title_activity_technical_analysis">TechnicalAnalysisActivity</string>
+    <string name="title_activity_logout">LogoutActivity</string>
+    <string name="signed_in_fmt">Signed in as: %s</string>
+
+</resources>
