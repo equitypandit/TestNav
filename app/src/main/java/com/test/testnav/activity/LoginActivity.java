@@ -208,7 +208,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     // Forgot password textview clicked
     public void forgot_password(View view) {
-        Toast.makeText(getApplicationContext(), "Forgot Password Clicked !", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Forgot Password Clicked !!", Toast.LENGTH_LONG).show();
     }
 
 }
