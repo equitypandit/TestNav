@@ -203,7 +203,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     // Signup textview clicked
     public void signup(View view) {
-        Toast.makeText(getApplicationContext(), "Signup Clicked !!!!", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Signup Clicked !", Toast.LENGTH_LONG).show();
     }
 
     // Forgot password textview clicked
