@@ -392,7 +392,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Toast.makeText(getApplicationContext(), "Logout user!", Toast.LENGTH_LONG).show();
+            Intent intent1 = new Intent(MainActivity.this, LogoutActivity.class);
+            startActivity(intent1);
             return true;
         }
 

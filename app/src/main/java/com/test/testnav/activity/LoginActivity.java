@@ -1,22 +1,23 @@
 package com.test.testnav.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.test.testnav.R;
 
@@ -26,7 +27,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     String S_email, S_password;
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
-    private TextView mStatusTextView;
+    private ConnectivityManager cm;
+
+    SharedPreferences pref;
+    SharedPreferences.Editor SP_editor;
+
 
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -35,69 +40,105 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        initCompo();
 
-        initListener();
+//        initCompo();
+//
+//        initListener();
 
-    }
-
-
-    private void initCompo() {
+        // Views
         ET_email = (EditText) findViewById(R.id.emailid);
         ET_password = (EditText) findViewById(R.id.password);
 
-        mStatusTextView = findViewById(R.id.status);
-    }
-
-    private void initListener() {
-
+        // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-        findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
+
+        // [START configure_signin]
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // [END configure_signin]
+
+        // [START build_client]
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        // [END build_client]
+
+        // [START customize_button]
+        // Set the dimensions of the sign-in button.
+        SignInButton signInButton = findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
+        // [END customize_button]
+
     }
+
+//    private void initCompo() {
+//
+//
+//    }
+//
+//    private void initListener() {
+//
+//    }
 
     // Login button clicked
-    public void login(View view) {
-        S_email = ET_email.getText().toString();
-        S_password = ET_password.getText().toString();
+    public void Login(View view) {
 
-        if (S_email.equals("")) {
-            ET_email.setError("Field cannot be empty");
-        } else if (S_password.equals("")) {
-            ET_password.setError("Field cannot be empty");
+        if (check_internet() == 1) {
+
+            S_email = ET_email.getText().toString();
+            S_password = ET_password.getText().toString();
+
+            if (S_email.equals("")) {
+                ET_email.setError("Field cannot be empty");
+            } else if (S_password.equals("")) {
+                ET_password.setError("Field cannot be empty");
+            } else {
+                // call signin activity for verifying username and password from server and get responce accordingly
+                new SigninBackTask(this, 1).execute(S_email, S_password);
+            }
+
         } else {
-            // call signin activity for verifying username and password from server and get responce accordingly
-            Toast.makeText(getApplicationContext(), "Login Credentials verified !", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "please check internet connection!", Toast.LENGTH_LONG).show();
+
         }
     }
 
     // Login with facebook button clicked
-    public void login_facebook(View view) {
+    public void login_Facebook(View view) {
         Toast.makeText(getApplicationContext(), "facebook Clicked !", Toast.LENGTH_LONG).show();
     }
 
-    // Login with google button clicked
-    public void login_google(View view) {
-        Toast.makeText(getApplicationContext(), "google Clicked !", Toast.LENGTH_LONG).show();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
-    }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        pref = getApplicationContext().getSharedPreferences("LoginDetails", MODE_PRIVATE);
+        SP_editor = pref.edit();
 
         // [START on_start_sign_in]
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         updateUI(account);
+
+        if (check_internet() == 1) {
+            String status = pref.getString("IsLogin", "");
+            if (status.equals("YES")) {
+//                Toast.makeText(getApplicationContext(), "Already Logged in " + status, Toast.LENGTH_LONG).show();
+                Intent intent1 = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent1);
+                finish();
+            } else {
+                Toast.makeText(getApplicationContext(), "LogIn Details Not Found ! " + status, Toast.LENGTH_LONG).show();
+            }
+
+        } else {
+            Toast.makeText(getApplicationContext(), "please check internet connection!", Toast.LENGTH_LONG).show();
+        }
         // [END on_start_sign_in]
     }
 
@@ -133,51 +174,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // [END handleSignInResult]
 
     // [START signIn]
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+    private void Login_Google() {
+        if (check_internet() == 1) {
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        } else {
+            Toast.makeText(getApplicationContext(), "please check internet connection!", Toast.LENGTH_LONG).show();
+
+        }
     }
     // [END signIn]
 
-    // [START signOut]
-    private void signOut() {
-        mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        updateUI(null);
-                        // [END_EXCLUDE]
-                    }
-                });
-    }
-    // [END signOut]
-
-    // [START revokeAccess]
-    private void revokeAccess() {
-        mGoogleSignInClient.revokeAccess()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        updateUI(null);
-                        // [END_EXCLUDE]
-                    }
-                });
-    }
-    // [END revokeAccess]
-
     private void updateUI(@Nullable GoogleSignInAccount account) {
         if (account != null) {
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, account.getDisplayName()));
-
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+            // add details to shared prefrence
+            add_login_details_to_SP("YES", "-", account.getDisplayName(), account.getEmail(), "-", "Google", "-");
+            Intent intent1 = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent1);
+            finish();
         } else {
-            mStatusTextView.setText("Signout");
-
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
     }
 
@@ -185,26 +200,59 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
-                signIn();
-                break;
-            case R.id.sign_out_button:
-                signOut();
-                break;
-            case R.id.disconnect_button:
-                revokeAccess();
+                Login_Google();
                 break;
         }
     }
 
-
     // Signup textview clicked
     public void signup(View view) {
-        Toast.makeText(getApplicationContext(), "Signup Clicked !", Toast.LENGTH_LONG).show();
+
+        if (check_internet() == 1) {
+            Intent intent1 = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent1);
+        } else {
+            Toast.makeText(getApplicationContext(), "please check internet connection!", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     // Forgot password textview clicked
     public void forgot_password(View view) {
-        Toast.makeText(getApplicationContext(), "Forgot Password Clicked !", Toast.LENGTH_LONG).show();
+
+        if (check_internet() == 1) {
+            Toast.makeText(getApplicationContext(), "Forgot Password Clicked !", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getApplicationContext(), "please check internet connection!", Toast.LENGTH_LONG).show();
+        }
+
     }
 
+    public int check_internet() {
+        int status;
+        cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isAvailable() && cm.getActiveNetworkInfo().isConnected()) {
+            status = 1;
+        } else {
+            status = 0;
+        }
+        return status;
+    }
+
+    public void add_login_details_to_SP(String... args) {
+
+        // Saving long
+        SP_editor.putString("IsLogin", args[0]);      // YES
+        SP_editor.putString("Id", args[1]);           // 123
+        SP_editor.putString("Name", args[2]);       // Priyank Kahar
+        SP_editor.putString("Email", args[3]);      // test@gmail.com
+        SP_editor.putString("Password", args[4]);   // Abcd@123
+        SP_editor.putString("LoginType", args[5]);  // Google
+        SP_editor.putString("Mobile", args[6]);       // 9876543210
+        SP_editor.commit();
+
+        // add details to DB if not exist
+        // mainly for person who loggerd in from google
+
+    }
 }
