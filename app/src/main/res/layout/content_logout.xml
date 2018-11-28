@@ -79,7 +79,6 @@
             android:layout_below="@+id/editText2"
             android:layout_gravity="center_horizontal"
             android:background="#731E17"
-            android:onClick="loginPost"
             android:text="Logout"
             android:textColor="#ffffff" />
     </LinearLayout>
