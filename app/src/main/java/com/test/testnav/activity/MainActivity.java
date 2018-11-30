@@ -1,6 +1,5 @@
 package com.test.testnav.activity;
 
-import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -38,7 +36,6 @@ import com.test.testnav.fragment.LatestnewsFragment;
 import com.test.testnav.fragment.MarketPredictionFragment;
 import com.test.testnav.fragment.MediaSectionFragment;
 import com.test.testnav.fragment.PricingFragment;
-import com.test.testnav.other.CircleTransform;
 import com.test.testnav.util.NotificationUtils;
 
 
@@ -70,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private BroadcastReceiver mRegistrationBroadcastReceiver;
+    SharedPreferences pref;
 
 
     @Override
@@ -94,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
 
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
+
+        pref = getApplicationContext().getSharedPreferences("LoginDetails", MODE_PRIVATE);
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,8 +152,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void loadNavHeader() {
         // name, website
-        txtName.setText("Priyank kahar");
-        txtWebsite.setText("equitypandit.2005@gmail.com");
+        txtName.setText(pref.getString("Name", ""));
+        txtWebsite.setText(pref.getString("Email", ""));
 
         // loading header background image
 //        Glide.with(this).load(urlNavHeaderBg)

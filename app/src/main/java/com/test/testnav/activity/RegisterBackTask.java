@@ -25,7 +25,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class RegisterBackTask extends AsyncTask<String, Void, String> {
     private Context context;
     private int byGetOrPost = 0;
-    String username, useremail, usermobile, password;
+    String username, useremail, usermobile, password, login_type;
 
     //    flag 0 means get and 1 means post.(By default it is get.
     public RegisterBackTask(Context context, int flag) {
@@ -45,6 +45,7 @@ public class RegisterBackTask extends AsyncTask<String, Void, String> {
             useremail = (String) arg0[1];
             usermobile = (String) arg0[2];
             password = (String) arg0[3];
+            login_type = (String) arg0[4];
 
 //            String link = "http://192.168.0.106/epsystem/app_api/login.php";
             String link = "http://www.equitypandit.com/portal/app2_api/reg_app.php";
@@ -52,6 +53,7 @@ public class RegisterBackTask extends AsyncTask<String, Void, String> {
             data += "&" + URLEncoder.encode("useremail", "UTF-8") + "=" + URLEncoder.encode(useremail, "UTF-8");
             data += "&" + URLEncoder.encode("mobile", "UTF-8") + "=" + URLEncoder.encode(usermobile, "UTF-8");
             data += "&" + URLEncoder.encode("password", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
+            data += "&" + URLEncoder.encode("login_type", "UTF-8") + "=" + URLEncoder.encode(login_type, "UTF-8");
             URL url = new URL(link);
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
@@ -81,7 +83,7 @@ public class RegisterBackTask extends AsyncTask<String, Void, String> {
             boolean error = jObj.getBoolean("error");
 //             Check for error node in json
             if (!error) {
-                add_login_details_to_SP("YES", "-", username, useremail, password, "Other", usermobile);
+                add_login_details_to_SP("YES", "-", username, useremail, password, login_type, usermobile);
 
                 // redirect to dashboard
                 Intent i = new Intent(context, MainActivity.class);

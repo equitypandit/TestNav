@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -39,6 +41,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Window window = this.getWindow();
+        window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark));
 
 
 //        initCompo();
@@ -188,7 +192,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void updateUI(@Nullable GoogleSignInAccount account) {
         if (account != null) {
             // add details to shared prefrence
-            add_login_details_to_SP("YES", "-", account.getDisplayName(), account.getEmail(), "-", "Google", "-");
+            add_login_details_to_SP("YES", "-", account.getDisplayName(), account.getEmail(), "", "Google", "-");
+            // add to db
+            new RegisterBackTask(this, 1).execute(account.getDisplayName(), account.getEmail(), "-", "-", "Google");
             Intent intent1 = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent1);
             finish();

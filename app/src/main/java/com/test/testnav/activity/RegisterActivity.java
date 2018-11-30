@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -21,7 +23,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     EditText uname, uemail, umobile, pass, repass;
-    String S_uname, S_uemail, S_umobile, S_pass, S_repass;
+    String S_uname, S_uemail, S_umobile, S_pass, S_repass, S_login_type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,9 @@ public class RegisterActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().hide();
+
+        Window window = this.getWindow();
+        window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark));
 
         // init compo
 
@@ -65,6 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
         S_umobile = umobile.getText().toString();
         S_pass = pass.getText().toString();
         S_repass = repass.getText().toString();
+        S_login_type = "other";
 
         if (S_uname.equals("")) {
             uname.setError("Name Required !");
@@ -80,7 +86,7 @@ public class RegisterActivity extends AppCompatActivity {
             repass.setError("Password & Re-typed Password are not equal !");
         } else {
 // send all to server for inserting into DB
-            new RegisterBackTask(this, 1).execute(S_uname, S_uemail, S_umobile, S_pass);
+            new RegisterBackTask(this, 1).execute(S_uname, S_uemail, S_umobile, S_pass, S_login_type);
         }
 
 
