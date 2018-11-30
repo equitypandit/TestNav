@@ -3,84 +3,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".activity.LogoutActivity"
-    tools:showIn="@layout/activity_logout">
+    tools:context=".activity.LogoutActivity">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
-        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!--<EditText-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="UserName"-->
-        <!--android:id="@+id/uname"-->
-        <!--android:editable="false"-->
-        <!--android:enabled="false"-->
-        <!--android:textColor="#303030" />-->
 
         <EditText
             android:id="@+id/uname"
             android:layout_width="300dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="5dp"
-            android:autoText="true"
-            android:background="#3c000000"
-            android:editable="false"
-            android:ems="10"
+            android:layout_marginBottom="10dp"
+            android:enabled="false"
             android:hint="Username"
-            android:padding="15dp"
-            android:textColor="#ffffff"
-            android:textColorHint="#d6ffffff"></EditText>
+            android:textColor="@color/colorPrimaryDark"></EditText>
 
         <EditText
             android:id="@+id/uemail"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="5dp"
-            android:autoText="true"
-            android:background="#3c000000"
-            android:editable="false"
-            android:ems="10"
-            android:hint="Username"
-            android:padding="15dp"
-            android:text="email"
-            android:textColor="#ffffff"
-            android:textColorHint="#d6ffffff"></EditText>
+            android:layout_marginBottom="10dp"
+            android:enabled="false"
+            android:hint="email"
+            android:textColor="@color/colorPrimaryDark"></EditText>
 
-        <!--<EditText-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="email"-->
-        <!--android:id="@+id/uemail"-->
-        <!--android:editable="false"/>-->
-
-        <!--<Button-->
-        <!--android:id="@+id/conf_logout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Logout" />-->
 
         <Button
             android:id="@+id/conf_logout"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/editText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:background="#731E17"
             android:text="Logout"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:theme="@style/MyButton" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
