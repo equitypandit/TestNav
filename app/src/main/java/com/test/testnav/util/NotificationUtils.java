@@ -31,9 +31,6 @@ import java.util.List;
 import com.test.testnav.R;
 import com.test.testnav.app.Config;
 
-/**
- * Created by Ravi on 31/03/15.
- */
 public class NotificationUtils {
 
     private static String TAG = NotificationUtils.class.getSimpleName();

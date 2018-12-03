@@ -43,11 +43,9 @@ public class FreeTrialActivity extends AppCompatActivity {
         SP_name = pref.getString("Name", "");
         SP_email = pref.getString("Email", "");
         SP_mobile = pref.getString("Mobile", "");
-//        if(SP_mobile.equals("-")){
-//            SP_mobile = " ";
-//        }
 
-        Toast.makeText(FreeTrialActivity.this, SP_email + " " + SP_mobile + " " + SP_name, Toast.LENGTH_LONG).show();
+
+//        Toast.makeText(FreeTrialActivity.this, SP_email + " " + SP_mobile + " " + SP_name, Toast.LENGTH_LONG).show();
 
         htmlWebView = (WebView) findViewById(R.id.paynow);
         htmlWebView.setWebViewClient(new WebViewClient());
@@ -61,8 +59,14 @@ public class FreeTrialActivity extends AppCompatActivity {
 //        } else {
         url = "http://www.equitypandit.com/portal/app_freetrial.php";
         try {
-            String postData = "tname=" + URLEncoder.encode(SP_name + "_", "UTF-8") + "&temail=" + URLEncoder.encode(SP_email, "UTF-8");
-            htmlWebView.postUrl(url, postData.getBytes());
+            if (SP_mobile.equals("-")) {
+                String postData = "tname=" + URLEncoder.encode(SP_name, "UTF-8") + "&temail=" + URLEncoder.encode(SP_email, "UTF-8");
+                htmlWebView.postUrl(url, postData.getBytes());
+            }else{
+                String postData = "tname=" + URLEncoder.encode(SP_name, "UTF-8") + "&temail=" + URLEncoder.encode(SP_email, "UTF-8") + "&tphno=" + URLEncoder.encode(SP_mobile, "UTF-8");
+                htmlWebView.postUrl(url, postData.getBytes());
+            }
+
         } catch (IOException e) {
             Toast.makeText(FreeTrialActivity.this, "IO e : " + e, Toast.LENGTH_LONG).show();
         }

@@ -137,7 +137,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent1);
                 finish();
             } else {
-                Toast.makeText(getApplicationContext(), "LogIn Details Not Found ! " + status, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "LogIn Details Not Found ! " + status, Toast.LENGTH_LONG).show();
             }
 
         } else {

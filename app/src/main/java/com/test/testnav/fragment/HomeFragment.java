@@ -2,6 +2,7 @@ package com.test.testnav.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,10 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.test.testnav.R;
 import com.test.testnav.activity.AskAnalystActivity;
 import com.test.testnav.activity.FreeTrialActivity;
+import com.test.testnav.activity.MainActivity;
 import com.test.testnav.activity.PricingActivity;
 import com.test.testnav.activity.TechnicalAnalysisActivity;
 import com.test.testnav.other.ImageAdapter;
@@ -54,6 +57,7 @@ public class HomeFragment extends Fragment {
     private String mParam2;
     private OnFragmentInteractionListener mListener;
     private NavigationView navigationView;
+    private ConnectivityManager cm;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -157,49 +161,57 @@ public class HomeFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 //                Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
-                switch (position) {
-                    case 0:
-                        // home
-                        MarketPredictionFragment marketPredictionFragment = new MarketPredictionFragment();
-                        FragmentTransaction ftmp = getFragmentManager().beginTransaction();
-                        ftmp.replace(R.id.frame, marketPredictionFragment);
-                        ftmp.addToBackStack(null);
-                        ftmp.commit();
-                        break;
-                    case 1:
-                        // technical analysis
-                        Intent tech_ana = new Intent(getActivity(), TechnicalAnalysisActivity.class);
-                        startActivity(tech_ana);
-                        break;
-                    case 2:
-                        LatestnewsFragment latestnewsFragment = new LatestnewsFragment();
-                        FragmentTransaction ftln = getFragmentManager().beginTransaction();
-                        ftln.replace(R.id.frame, latestnewsFragment);
-                        ftln.addToBackStack(null);
-                        ftln.commit();
-                        break;
-                    case 3:
-                        // pricing
-                        Intent pricingintent = new Intent(getActivity(), PricingActivity.class);
-                        startActivity(pricingintent);
-                        break;
-                    case 4:
-                        // free trial
-                        Intent ftintent = new Intent(getActivity(), FreeTrialActivity.class);
-                        startActivity(ftintent);
-                        break;
-                    case 9:
-                        // ask the analyst
-                        Intent ata = new Intent(getActivity(), AskAnalystActivity.class);
-                        startActivity(ata);
-                        break;
-                    default:
-                        HomeFragment homeFragment = new HomeFragment();
-                        FragmentTransaction fth = getFragmentManager().beginTransaction();
-                        fth.replace(R.id.frame, homeFragment);
-                        fth.addToBackStack(null);
-                        fth.commit();
-                        break;
+                cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isAvailable() && cm.getActiveNetworkInfo().isConnected()) {
+
+                    switch (position) {
+                        case 0:
+                            // home
+                            MarketPredictionFragment marketPredictionFragment = new MarketPredictionFragment();
+                            FragmentTransaction ftmp = getFragmentManager().beginTransaction();
+                            ftmp.replace(R.id.frame, marketPredictionFragment);
+                            ftmp.addToBackStack(null);
+                            ftmp.commit();
+                            break;
+                        case 1:
+                            // technical analysis
+                            Intent tech_ana = new Intent(getActivity(), TechnicalAnalysisActivity.class);
+                            startActivity(tech_ana);
+                            break;
+                        case 2:
+                            LatestnewsFragment latestnewsFragment = new LatestnewsFragment();
+                            FragmentTransaction ftln = getFragmentManager().beginTransaction();
+                            ftln.replace(R.id.frame, latestnewsFragment);
+                            ftln.addToBackStack(null);
+                            ftln.commit();
+                            break;
+                        case 3:
+                            // pricing
+                            Intent pricingintent = new Intent(getActivity(), PricingActivity.class);
+                            startActivity(pricingintent);
+                            break;
+                        case 4:
+                            // free trial
+                            Intent ftintent = new Intent(getActivity(), FreeTrialActivity.class);
+                            startActivity(ftintent);
+                            break;
+                        case 9:
+                            // ask the analyst
+                            Intent ata = new Intent(getActivity(), AskAnalystActivity.class);
+                            startActivity(ata);
+                            break;
+                        default:
+                            HomeFragment homeFragment = new HomeFragment();
+                            FragmentTransaction fth = getFragmentManager().beginTransaction();
+                            fth.replace(R.id.frame, homeFragment);
+                            fth.addToBackStack(null);
+                            fth.commit();
+                            break;
+                    }
+
+                } else {
+//                    // check your internet connection
+                    Toast.makeText(getActivity(), "please check internet connection!", Toast.LENGTH_LONG).show();
                 }
             }
         });

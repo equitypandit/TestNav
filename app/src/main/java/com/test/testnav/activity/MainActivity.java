@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -28,6 +30,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.test.testnav.R;
 import com.test.testnav.app.Config;
@@ -69,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     SharedPreferences pref;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +108,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        FirebaseMessaging.getInstance().subscribeToTopic("equitypandit")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+//                        String msg = "Your Device is enabled for Equitypandit's Notifications.";
+//                        if (!task.isSuccessful()) {
+//                            msg = " ";
+//                        }
+//                        Log.d(TAG, msg);
+//                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
         // load nav menu header data
         loadNavHeader();
 
@@ -122,17 +137,10 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
 
                 // checking for type intent filter
-                if (intent.getAction().equals(Config.REGISTRATION_COMPLETE)) {
-                    // gcm successfully registered
-                    // now subscribe to `global` topic to receive app wide notifications
-                    FirebaseMessaging.getInstance().subscribeToTopic(Config.TOPIC_GLOBAL);
-                    displayFirebaseRegId();
-
-                } else if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
                     // new push notification is received
 
                     String message = intent.getStringExtra("message");
-                    String title = intent.getStringExtra("title");
 
                     Toast.makeText(getApplicationContext(), "Push notification: " + message, Toast.LENGTH_LONG).show();
 
@@ -270,43 +278,44 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
 
-                //Check to see which item was being clicked and perform appropriate action
-                switch (menuItem.getItemId()) {
-                    //Replacing the main content with ContentFragment Which is our Inbox View;
-                    case R.id.nav_home:
-                        startActivity(new Intent(MainActivity.this, MainActivity.class));
-                        finish();
-                        drawer.closeDrawers();
-                        return true;
-                    case R.id.nav_photos:
-                        startActivity(new Intent(MainActivity.this, PricingActivity.class));
-                        drawer.closeDrawers();
-                        return true;
-                    case R.id.nav_movies:
-                        navItemIndex = 2;
-                        CURRENT_TAG = TAG_LATEST_NEWS;
-                        break;
-                    case R.id.nav_notifications:
-                        navItemIndex = 3;
-                        CURRENT_TAG = TAG_MARKET_PREDICTION;
-                        break;
-                    case R.id.nav_settings:
-                        navItemIndex = 4;
-                        CURRENT_TAG = TAG_MEDIA_SECTION;
-                        break;
-                    case R.id.nav_about_us:
-                        // launch new intent instead of loading fragment
-                        startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
-                        drawer.closeDrawers();
-                        return true;
-                    case R.id.nav_privacy_policy:
-                        // launch new intent instead of loading fragment
-                        startActivity(new Intent(MainActivity.this, PrivacyPolicyActivity.class));
-                        drawer.closeDrawers();
-                        return true;
-                    default:
-                        navItemIndex = 0;
-                }
+
+                    //Check to see which item was being clicked and perform appropriate action
+                    switch (menuItem.getItemId()) {
+                        //Replacing the main content with ContentFragment Which is our Inbox View;
+                        case R.id.nav_home:
+                            startActivity(new Intent(MainActivity.this, MainActivity.class));
+                            finish();
+                            drawer.closeDrawers();
+                            return true;
+                        case R.id.nav_photos:
+                            startActivity(new Intent(MainActivity.this, PricingActivity.class));
+                            drawer.closeDrawers();
+                            return true;
+                        case R.id.nav_movies:
+                            navItemIndex = 2;
+                            CURRENT_TAG = TAG_LATEST_NEWS;
+                            break;
+                        case R.id.nav_notifications:
+                            navItemIndex = 3;
+                            CURRENT_TAG = TAG_MARKET_PREDICTION;
+                            break;
+                        case R.id.nav_settings:
+                            navItemIndex = 4;
+                            CURRENT_TAG = TAG_MEDIA_SECTION;
+                            break;
+                        case R.id.nav_about_us:
+                            // launch new intent instead of loading fragment
+                            startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
+                            drawer.closeDrawers();
+                            return true;
+                        case R.id.nav_privacy_policy:
+                            // launch new intent instead of loading fragment
+                            startActivity(new Intent(MainActivity.this, PrivacyPolicyActivity.class));
+                            drawer.closeDrawers();
+                            return true;
+                        default:
+                            navItemIndex = 0;
+                    }
 
                 //Checking if the item is in checked state or not, if not make it in checked state
                 if (menuItem.isChecked()) {
@@ -427,11 +436,10 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e(TAG, "Firebase reg id: " + regId);
 
-        if (!TextUtils.isEmpty(regId)){
-            Toast.makeText(getApplicationContext(), "Reg ID: "+regId, Toast.LENGTH_LONG).show();
-    }
-        else{
-            Toast.makeText(getApplicationContext(), "Red ID not found", Toast.LENGTH_LONG).show();
+        if (!TextUtils.isEmpty(regId)) {
+//            Toast.makeText(getApplicationContext(), "Reg ID: "+regId, Toast.LENGTH_LONG).show();
+        } else {
+//            Toast.makeText(getApplicationContext(), "Red ID not found", Toast.LENGTH_LONG).show();
         }
     }
 
