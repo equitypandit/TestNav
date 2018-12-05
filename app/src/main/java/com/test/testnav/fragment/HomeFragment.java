@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -16,20 +16,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.test.testnav.R;
 import com.test.testnav.activity.AskAnalystActivity;
 import com.test.testnav.activity.FreeTrialActivity;
-import com.test.testnav.activity.MainActivity;
 import com.test.testnav.activity.PricingActivity;
 import com.test.testnav.activity.TechnicalAnalysisActivity;
+import com.test.testnav.other.CustomVolleyRequest;
 import com.test.testnav.other.ImageAdapter;
-import com.test.testnav.other.ImageModel;
-import com.test.testnav.other.SlidingImage_Adapter;
-import com.viewpagerindicator.CirclePageIndicator;
+import com.test.testnav.other.SliderUtils;
+import com.test.testnav.other.ViewPagerAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,12 +57,17 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG_HOME = "home";
-    private static ViewPager mPager;
-    private static int currentPage = 0;
-    private static int NUM_PAGES = 0;
 
-    private ArrayList<ImageModel> imageModelArrayList;
-    private int[] myImageList = new int[]{R.drawable.home, R.drawable.offer_image2, R.drawable.home, R.drawable.offer_image2, R.drawable.home, R.drawable.offer_image2};
+    String request_url = "http://equitypandit.com/portal/app2_api/load_app_data.php?req_data=slides";
+    ViewPager viewPager;
+    LinearLayout sliderDotspanel;
+    private int dotscount;
+    private ImageView[] dots;
+
+    RequestQueue rq;
+    List<SliderUtils> sliderImg;
+    ViewPagerAdapter viewPagerAdapter;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -101,57 +117,35 @@ public class HomeFragment extends Fragment {
         GridView gridview = (GridView) view.findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(getActivity()));
 
-        imageModelArrayList = new ArrayList<>();
-        imageModelArrayList = populateList();
+        rq = CustomVolleyRequest.getInstance(getContext()).getRequestQueue();
 
-        mPager = (ViewPager) view.findViewById(R.id.pager);
-        mPager.setAdapter(new SlidingImage_Adapter(getActivity(), imageModelArrayList));
+        sliderImg = new ArrayList<>();
 
-        CirclePageIndicator indicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
+        viewPager = (ViewPager) view.findViewById(R.id.pager);
 
-        indicator.setViewPager(mPager);
+        sliderDotspanel = (LinearLayout) view.findViewById(R.id.SliderDots);
 
-        final float density = getResources().getDisplayMetrics().density;
+        sendRequest();
 
-//Set circle indicator radius
-        indicator.setRadius(5 * density);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        NUM_PAGES = imageModelArrayList.size();
-
-        // Auto start of viewpager
-        final Handler handler = new Handler();
-        final Runnable Update = new Runnable() {
-            public void run() {
-                if (currentPage == NUM_PAGES) {
-                    currentPage = 0;
-                }
-                mPager.setCurrentItem(currentPage++, true);
             }
-        };
-//        Timer swipeTimer = new Timer();
-//        swipeTimer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                handler.post(Update);
-//            }
-//        }, 3000, 3000);
-
-        // Pager listener over indicator
-        indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
             public void onPageSelected(int position) {
-                currentPage = position;
+
+                for (int i = 0; i < dotscount; i++) {
+                    dots[i].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.bg_circle));
+                }
+
+                dots[position].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.bg_circle_inactive));
 
             }
 
             @Override
-            public void onPageScrolled(int pos, float arg1, int arg2) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int pos) {
+            public void onPageScrollStateChanged(int state) {
 
             }
         });
@@ -219,23 +213,9 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private ArrayList<ImageModel> populateList() {
-
-        ArrayList<ImageModel> list = new ArrayList<>();
-
-        for (int i = 0; i < 6; i++) {
-            ImageModel imageModel = new ImageModel();
-            imageModel.setImage_drawable(myImageList[i]);
-            list.add(imageModel);
-        }
-
-        return list;
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -254,6 +234,7 @@ public class HomeFragment extends Fragment {
 //            throw new RuntimeException(context.toString()
 //                    + " must implement OnFragmentInteractionListener");
 //        }
+
     }
 
     @Override
@@ -276,4 +257,58 @@ public class HomeFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
+
+    public void sendRequest() {
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, request_url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    SliderUtils sliderUtils = new SliderUtils();
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+
+                        sliderUtils.setSliderImageUrl(jsonObject.getString("slides"));
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    sliderImg.add(sliderUtils);
+                }
+
+                viewPagerAdapter = new ViewPagerAdapter(sliderImg, getContext());
+                viewPager.setAdapter(viewPagerAdapter);
+
+                dotscount = viewPagerAdapter.getCount();
+                dots = new ImageView[dotscount];
+
+                for (int i = 0; i < dotscount; i++) {
+                    dots[i] = new ImageView(getContext());
+                    dots[i].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.bg_circle));
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(10, 10);
+                    params.setMargins(8, 0, 8, 0);
+                    sliderDotspanel.addView(dots[i], params);
+                }
+
+                dots[0].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.bg_circle_inactive));
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        CustomVolleyRequest.getInstance(getContext()).addToRequestQueue(jsonArrayRequest);
+
+    }
+
+
 }

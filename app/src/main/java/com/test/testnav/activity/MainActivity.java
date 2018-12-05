@@ -402,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent1 = new Intent(MainActivity.this, LogoutActivity.class);
+            Intent intent1 = new Intent(MainActivity.this, ContactUsActivity.class);
             startActivity(intent1);
             return true;
         }
